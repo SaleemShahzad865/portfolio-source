@@ -1,15 +1,16 @@
-import app from "../artifacts/api-server/src/app";
+import app from "../artifacts/api-server/dist/app.mjs";
 
 // Vercel Serverless Function entrypoint.
 // This file intentionally exports a default handler (req, res) compatible with Express.
 export default function handler(req: any, res: any) {
   const url = typeof req.url === "string" ? req.url : "";
+  const expressApp = app as any;
 
   // If we reached this handler via a rewrite for `/uploads/*`, convert the internal
   // Vercel path into the actual Express static mount.
   if (url.startsWith("/api/uploads-static/")) {
     req.url = url.replace("/api/uploads-static", "/uploads");
-    return app(req, res);
+    return expressApp(req, res);
   }
 
   // Some runtimes forward `/api/*` as `/*` to the function. Normalize to keep our
@@ -18,6 +19,5 @@ export default function handler(req: any, res: any) {
     req.url = `/api${url.startsWith("/") ? "" : "/"}${url}`;
   }
 
-  return app(req, res);
+  return expressApp(req, res);
 }
-
