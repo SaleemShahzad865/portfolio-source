@@ -31,6 +31,5 @@ git remote -v
 3. Deploy.
 
 ### Notes / Limitations (important)
-- **Uploads are not persistent on Vercel**: uploads are written to `/tmp` in serverless and can disappear after redeploy/cold start.
-  - For production, use externally hosted URLs for logos/resume, or integrate object storage (S3/R2/Cloudinary).
-
+- Uploads (logos/resume) are persisted in Postgres when `DATABASE_URL` is set.
+  - Note: storing files in Postgres can grow your DB quickly; keep uploads small (this app already enforces a 6MB limit).
