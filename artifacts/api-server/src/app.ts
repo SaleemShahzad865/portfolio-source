@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
+import type { NextFunction, Request, Response } from "express";
 import path from "node:path";
 import { existsSync } from "node:fs";
 import router from "./routes";
@@ -35,6 +36,27 @@ app.use(cookieParser());
 app.use(express.json({ limit: "15mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(authMiddleware);
+
+// Persistent uploads in Postgres (Neon): serve from DB when DATABASE_URL is set.
+// Falls back to the local uploads dir for local dev / non-DB runs.
+app.get("/uploads/:key", async (req: Request, res: Response, next: NextFunction) => {
+  if (!process.env.DATABASE_URL) return next();
+  const key = typeof req.params.key === "string" ? req.params.key : "";
+  if (!key) return next();
+
+  try {
+    const { getUploadByKey } = await import("./lib/uploads-postgres");
+    const upload = await getUploadByKey(key);
+    if (!upload) return next();
+
+    res.setHeader("Content-Type", upload.mime);
+    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+    res.status(200).send(upload.bytes);
+  } catch (err) {
+    logger.error({ err }, "Failed to serve upload");
+    next();
+  }
+});
 
 // Serve uploaded assets from the API so production can run on a single host.
 app.use(

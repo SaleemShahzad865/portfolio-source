@@ -174,6 +174,17 @@ router.post("/uploads", async (req, res): Promise<void> => {
     .replace(/^-+|-+$/g, "")
     .toLowerCase() || "image";
 
+  if (process.env.DATABASE_URL) {
+    const { saveUploadToPostgres } = await import("../lib/uploads-postgres");
+    const { url } = await saveUploadToPostgres({
+      filename: `${safeBase}${extension}`,
+      mime: parsed.mime,
+      buffer: parsed.buffer,
+    });
+    res.status(201).json({ url });
+    return;
+  }
+
   await migrateLegacyUploads(legacyUploadsDir, uploadsDir);
 
   await mkdir(uploadsDir, { recursive: true });
