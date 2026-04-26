@@ -9,8 +9,8 @@ import { useState } from "react";
 export default function Login() {
   const { login, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
-  const [email, setEmail] = useState("saleem2003");
-  const [password, setPassword] = useState("saleem@2003");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -79,10 +79,6 @@ export default function Login() {
               {error}
             </div>
           ) : null}
-
-          <div className="mt-4 text-xs font-mono text-muted-foreground">
-            Username: saleem2003 | Password: saleem@2003
-          </div>
 
           <Button 
             onClick={handleLogin}
