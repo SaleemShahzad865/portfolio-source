@@ -22,148 +22,164 @@ import type {
 } from "@workspace/api-zod";
 
 const sessionTtlMs = 7 * 24 * 60 * 60 * 1000;
-const demoSeedKey = "__demo_seed_v1";
+const demoSeedPostsKey = "__demo_seed_posts_v1";
+const demoSeedProjectsKey = "__demo_seed_projects_v1";
 
-let demoSeedPromise: Promise<void> | null = null;
+let demoSeedPostsPromise: Promise<void> | null = null;
+let demoSeedProjectsPromise: Promise<void> | null = null;
 
-async function ensureDemoContentOnce(): Promise<void> {
-  if (demoSeedPromise) return demoSeedPromise;
+async function ensureDemoPostsOnce(): Promise<void> {
+  if (demoSeedPostsPromise) return demoSeedPostsPromise;
 
-  demoSeedPromise = (async () => {
-    // Acquire a distributed "seed lock" using the sections table (key is PK).
-    // If another instance already seeded, this insert will conflict and return no rows.
+  demoSeedPostsPromise = (async () => {
     const [lock] = await db
       .insert(sectionsTable)
-      .values({ key: demoSeedKey, value: new Date().toISOString() })
+      .values({ key: demoSeedPostsKey, value: new Date().toISOString() })
       .onConflictDoNothing({ target: sectionsTable.key })
       .returning();
 
     if (!lock) return;
 
-    const [{ count: postCountRaw }] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(postsTable);
-    const postCount = Number(postCountRaw ?? 0);
-
-    if (postCount === 0) {
-      await db
-        .insert(postsTable)
-        .values([
-          {
-            slug: "demo-getting-started-with-embedded-systems",
-            title: "Getting Started with Embedded Systems",
-            excerpt:
-              "A practical roadmap for building real hardware projects: tools, boards, and the habits that speed up debugging.",
-            coverImage: "/images/blog-schematic-pcb.png",
-            publishedAt: "2026-04-01",
-            readTimeMinutes: 7,
-            tags: ["Embedded", "Hardware"],
-            content:
-              "Embedded systems blend software, electronics, and testing. Start with a simple microcontroller project, learn basic debugging with a serial console, and iterate quickly with small milestones.\n\nKey topics: GPIO, UART, I2C, power integrity, and documenting your experiments.",
-            isPublished: true,
-          },
-          {
-            slug: "demo-pcb-design-checklist",
-            title: "PCB Design Checklist (Before You Order)",
-            excerpt:
-              "A quick pre-flight checklist to catch the most common board-killing mistakes before fabrication.",
-            coverImage: "/images/blog-pcb-design.png",
-            publishedAt: "2026-04-05",
-            readTimeMinutes: 6,
-            tags: ["PCB", "Checklist"],
-            content:
-              "Checklist: verify net classes, clearances, footprints, polarity, layer stackup, DRC settings, and test points. Double-check power rails and connector pinouts.\n\nIf you do nothing else: print the schematic and do a manual review.",
-            isPublished: true,
-          },
-          {
-            slug: "demo-esp32-iot-basics",
-            title: "ESP32 IoT Basics: Wi‑Fi, MQTT, and Reliability",
-            excerpt:
-              "Moving from a prototype to a reliable device means thinking about reconnects, timeouts, and power loss.",
-            coverImage: "/images/blog-esp32-arduino.png",
-            publishedAt: "2026-04-10",
-            readTimeMinutes: 8,
-            tags: ["ESP32", "IoT", "MQTT"],
-            content:
-              "Reliable IoT is mostly edge cases: Wi‑Fi drops, broker restarts, DNS failures, and brownouts. Add reconnect backoff, watchdogs, and safe state defaults.\n\nAlso: log what matters and keep OTA updates in mind early.",
-            isPublished: true,
-          },
-          {
-            slug: "demo-debugging-i2c-like-a-pro",
-            title: "Debugging I2C Like a Pro",
-            excerpt:
-              "Bus scans are not enough. Learn how to interpret waveforms, pull-ups, and common failure modes.",
-            coverImage: "/images/blog-debugging-i2c.png",
-            publishedAt: "2026-04-15",
-            readTimeMinutes: 5,
-            tags: ["I2C", "Debugging"],
-            content:
-              "Start with pull-up values and bus capacitance. Confirm voltage levels. Use a logic analyzer to inspect START/STOP conditions and ACK/NACK.\n\nCommon issues: wrong address, mixed voltage domains, and missing pull-ups.",
-            isPublished: true,
-          },
-          {
-            slug: "demo-low-power-design-notes",
-            title: "Low Power Design Notes for Battery Devices",
-            excerpt:
-              "Sleep modes, leakage paths, and measuring current correctly can extend battery life by months.",
-            coverImage: "/images/blog-low-power.png",
-            publishedAt: "2026-04-20",
-            readTimeMinutes: 9,
-            tags: ["Low Power", "Battery"],
-            content:
-              "Measure first: profile active vs sleep current, then remove wake sources and leakage. Choose regulators with low IQ and validate sleep current at temperature.\n\nA small change in firmware duty cycle often beats hardware changes.",
-            isPublished: true,
-          },
-        ])
-        .onConflictDoNothing({ target: postsTable.slug });
-    }
-
-    const [{ count: projectCountRaw }] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(projectsTable);
-    const projectCount = Number(projectCountRaw ?? 0);
-
-    if (projectCount === 0) {
-      const categories: Array<Project["category"]> = [
-        "pcb",
-        "iot",
-        "esp32",
-        "arm",
-        "arduino",
-        "simulation",
-      ];
-
-      const demoProjects: Array<Omit<Project, "id" | "createdAt" | "updatedAt">> =
-        [];
-
-      let sortOrder = 1000;
-      let imageIndex = 1;
-
-      for (const category of categories) {
-        for (let i = 1; i <= 3; i++) {
-          demoProjects.push({
-            title: `Demo ${category.toUpperCase()} Project ${i}`,
-            description:
-              "Demo project entry used to populate the portfolio page. Replace with your real work when ready.",
-            details:
-              "This is placeholder content to validate UI layout, filtering, and admin CRUD. Update title, description, images, and links with real project details.",
-            category,
-            image: `/images/project-${imageIndex}.png`,
-            tags: [category.toUpperCase(), "Demo"],
-            link: `https://example.com/demo/${category}/${i}`,
-            sortOrder: sortOrder++,
-          });
-
-          imageIndex++;
-          if (imageIndex > 6) imageIndex = 1;
-        }
-      }
-
-      await db.insert(projectsTable).values(demoProjects);
-    }
+    // Always attempt to insert demo posts; slug is unique so duplicates are avoided.
+    await db
+      .insert(postsTable)
+      .values([
+        {
+          slug: "demo-getting-started-with-embedded-systems",
+          title: "Getting Started with Embedded Systems",
+          excerpt:
+            "A practical roadmap for building real hardware projects: tools, boards, and the habits that speed up debugging.",
+          coverImage: "/images/blog-schematic-pcb.png",
+          publishedAt: "2026-04-01",
+          readTimeMinutes: 7,
+          tags: ["Embedded", "Hardware"],
+          content:
+            "Embedded systems blend software, electronics, and testing. Start with a simple microcontroller project, learn basic debugging with a serial console, and iterate quickly with small milestones.\n\nKey topics: GPIO, UART, I2C, power integrity, and documenting your experiments.",
+          isPublished: true,
+        },
+        {
+          slug: "demo-pcb-design-checklist",
+          title: "PCB Design Checklist (Before You Order)",
+          excerpt:
+            "A quick pre-flight checklist to catch the most common board-killing mistakes before fabrication.",
+          coverImage: "/images/blog-pcb-design.png",
+          publishedAt: "2026-04-05",
+          readTimeMinutes: 6,
+          tags: ["PCB", "Checklist"],
+          content:
+            "Checklist: verify net classes, clearances, footprints, polarity, layer stackup, DRC settings, and test points. Double-check power rails and connector pinouts.\n\nIf you do nothing else: print the schematic and do a manual review.",
+          isPublished: true,
+        },
+        {
+          slug: "demo-esp32-iot-basics",
+          title: "ESP32 IoT Basics: Wi‑Fi, MQTT, and Reliability",
+          excerpt:
+            "Moving from a prototype to a reliable device means thinking about reconnects, timeouts, and power loss.",
+          coverImage: "/images/blog-esp32-arduino.png",
+          publishedAt: "2026-04-10",
+          readTimeMinutes: 8,
+          tags: ["ESP32", "IoT", "MQTT"],
+          content:
+            "Reliable IoT is mostly edge cases: Wi‑Fi drops, broker restarts, DNS failures, and brownouts. Add reconnect backoff, watchdogs, and safe state defaults.\n\nAlso: log what matters and keep OTA updates in mind early.",
+          isPublished: true,
+        },
+        {
+          slug: "demo-debugging-i2c-like-a-pro",
+          title: "Debugging I2C Like a Pro",
+          excerpt:
+            "Bus scans are not enough. Learn how to interpret waveforms, pull-ups, and common failure modes.",
+          coverImage: "/images/blog-debugging-i2c.png",
+          publishedAt: "2026-04-15",
+          readTimeMinutes: 5,
+          tags: ["I2C", "Debugging"],
+          content:
+            "Start with pull-up values and bus capacitance. Confirm voltage levels. Use a logic analyzer to inspect START/STOP conditions and ACK/NACK.\n\nCommon issues: wrong address, mixed voltage domains, and missing pull-ups.",
+          isPublished: true,
+        },
+        {
+          slug: "demo-low-power-design-notes",
+          title: "Low Power Design Notes for Battery Devices",
+          excerpt:
+            "Sleep modes, leakage paths, and measuring current correctly can extend battery life by months.",
+          coverImage: "/images/blog-low-power.png",
+          publishedAt: "2026-04-20",
+          readTimeMinutes: 9,
+          tags: ["Low Power", "Battery"],
+          content:
+            "Measure first: profile active vs sleep current, then remove wake sources and leakage. Choose regulators with low IQ and validate sleep current at temperature.\n\nA small change in firmware duty cycle often beats hardware changes.",
+          isPublished: true,
+        },
+      ])
+      .onConflictDoNothing({ target: postsTable.slug });
   })();
 
-  return demoSeedPromise;
+  return demoSeedPostsPromise;
+}
+
+async function ensureDemoProjectsOnce(): Promise<void> {
+  if (demoSeedProjectsPromise) return demoSeedProjectsPromise;
+
+  demoSeedProjectsPromise = (async () => {
+    const [{ count: existingDemoRaw }] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(projectsTable)
+      .where(sql`${projectsTable.link} like 'https://example.com/demo/%'`);
+    const existingDemoCount = Number(existingDemoRaw ?? 0);
+
+    if (existingDemoCount > 0) return;
+
+    const [lock] = await db
+      .insert(sectionsTable)
+      .values({ key: demoSeedProjectsKey, value: new Date().toISOString() })
+      .onConflictDoNothing({ target: sectionsTable.key })
+      .returning();
+
+    if (!lock) return;
+
+    const categories: Array<Project["category"]> = [
+      "pcb",
+      "iot",
+      "esp32",
+      "arm",
+      "arduino",
+      "simulation",
+    ];
+
+    const demoProjects: Array<Omit<Project, "id" | "createdAt" | "updatedAt">> =
+      [];
+
+    let sortOrder = 1000;
+    let imageIndex = 1;
+
+    for (const category of categories) {
+      for (let i = 1; i <= 3; i++) {
+        demoProjects.push({
+          title: `Demo ${category.toUpperCase()} Project ${i}`,
+          description:
+            "Demo project entry used to populate the portfolio page. Replace with your real work when ready.",
+          details:
+            "This is placeholder content to validate UI layout, filtering, and admin CRUD. Update title, description, images, and links with real project details.",
+          category,
+          image: `/images/project-${imageIndex}.png`,
+          tags: [category.toUpperCase(), "Demo"],
+          link: `https://example.com/demo/${category}/${i}`,
+          sortOrder: sortOrder++,
+        });
+
+        imageIndex++;
+        if (imageIndex > 6) imageIndex = 1;
+      }
+    }
+
+    await db.insert(projectsTable).values(demoProjects);
+  })();
+
+  return demoSeedProjectsPromise;
+}
+
+async function ensureDemoContent(): Promise<void> {
+  await ensureDemoProjectsOnce();
+  await ensureDemoPostsOnce();
 }
 
 function coercePost(row: typeof postsTable.$inferSelect): Post {
@@ -223,7 +239,7 @@ function coerceContactMessage(
 }
 
 export async function listPosts(): Promise<Post[]> {
-  await ensureDemoContentOnce();
+  await ensureDemoContent();
   const rows = await db
     .select()
     .from(postsTable)
@@ -297,7 +313,7 @@ export async function deletePost(id: number): Promise<Post | null> {
 }
 
 export async function listProjects(): Promise<Project[]> {
-  await ensureDemoContentOnce();
+  await ensureDemoContent();
   const rows = await db
     .select()
     .from(projectsTable)
