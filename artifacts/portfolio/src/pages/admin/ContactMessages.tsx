@@ -6,9 +6,9 @@ import {
   type ContactMessage,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Eye, Mail, MailOpen, Search, Trash2 } from "lucide-react";
+import { Mail, MailOpen, Search, Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,14 +26,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
 function formatDate(value: Date | string): string {
   const date = value instanceof Date ? value : new Date(value);
@@ -45,6 +37,7 @@ export default function ContactMessages() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [unreadOnly, setUnreadOnly] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
   const list = useListContactMessages(
     { unreadOnly },
@@ -62,6 +55,44 @@ export default function ContactMessages() {
       `${m.name} ${m.email} ${m.subject} ${m.message}`.toLowerCase().includes(needle),
     );
   }, [messages, search]);
+
+  useEffect(() => {
+    if (filtered.length === 0) {
+      setSelectedId(null);
+      return;
+    }
+    setSelectedId((prev) => {
+      if (prev == null) return filtered[0]?.id ?? null;
+      if (filtered.some((m) => m.id === prev)) return prev;
+      return filtered[0]?.id ?? null;
+    });
+  }, [filtered]);
+
+  const selected = useMemo(() => {
+    if (selectedId == null) return null;
+    return filtered.find((m) => m.id === selectedId) ?? null;
+  }, [filtered, selectedId]);
+
+  const markRead = (message: ContactMessage) => {
+    if (message.isRead) return;
+
+    updateMessage.mutate(
+      { id: message.id, data: { isRead: true } },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: getListContactMessagesQueryKey({ unreadOnly }),
+          });
+          queryClient.invalidateQueries({
+            queryKey: getListContactMessagesQueryKey({ unreadOnly: false }),
+          });
+          queryClient.invalidateQueries({
+            queryKey: getListContactMessagesQueryKey({ unreadOnly: true }),
+          });
+        },
+      },
+    );
+  };
 
   const toggleRead = (message: ContactMessage) => {
     updateMessage.mutate(
@@ -137,180 +168,198 @@ export default function ContactMessages() {
         </div>
       </div>
 
-      <div className="bg-card/40 border border-border/50 rounded-xl overflow-hidden backdrop-blur-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-card/50 font-mono text-xs uppercase text-muted-foreground border-b border-border/50">
-              <tr>
-                <th className="px-6 py-4 font-medium">Status</th>
-                <th className="px-6 py-4 font-medium">From</th>
-                <th className="px-6 py-4 font-medium hidden md:table-cell">Subject</th>
-                <th className="px-6 py-4 font-medium hidden lg:table-cell">Received</th>
-                <th className="px-6 py-4 font-medium text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/50">
-              {list.isLoading ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="px-6 py-8 text-center text-muted-foreground"
-                  >
-                    Loading...
-                  </td>
-                </tr>
-              ) : filtered.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="px-6 py-8 text-center text-muted-foreground"
-                  >
-                    No messages found.
-                  </td>
-                </tr>
-              ) : (
-                filtered.map((message) => (
-                  <tr
+      <div className="grid gap-4 lg:grid-cols-[420px_1fr]">
+        <div className="bg-card/40 border border-border/50 rounded-xl overflow-hidden backdrop-blur-sm">
+          <div className="px-4 py-3 border-b border-border/50 bg-card/50 flex items-center justify-between">
+            <div className="font-mono text-xs uppercase text-muted-foreground">
+              Inbox
+            </div>
+            <div className="font-mono text-xs text-muted-foreground">
+              {filtered.length} message{filtered.length === 1 ? "" : "s"}
+            </div>
+          </div>
+
+          {list.isLoading ? (
+            <div className="px-4 py-8 text-center text-muted-foreground">
+              Loading...
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="px-4 py-8 text-center text-muted-foreground">
+              No messages found.
+            </div>
+          ) : (
+            <div className="divide-y divide-border/50">
+              {filtered.map((message) => {
+                const isSelected = selectedId === message.id;
+                const preview = (message.message || "")
+                  .replace(/\s+/g, " ")
+                  .trim()
+                  .slice(0, 120);
+
+                return (
+                  <button
                     key={message.id}
-                    className="hover:bg-muted/20 transition-colors"
+                    type="button"
+                    className={[
+                      "w-full text-left px-4 py-3 transition-colors",
+                      "hover:bg-muted/20",
+                      isSelected ? "bg-muted/20" : "",
+                    ].join(" ")}
+                    onClick={() => {
+                      setSelectedId(message.id);
+                      markRead(message);
+                    }}
                   >
-                    <td className="px-6 py-4">
-                      <Badge
-                        variant={message.isRead ? "secondary" : "default"}
-                        className="font-mono text-[10px] uppercase"
-                      >
-                        {message.isRead ? "Read" : "Unread"}
-                      </Badge>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="font-medium">{message.name}</span>
-                        <span className="text-muted-foreground font-mono text-xs break-all">
-                          {message.email}
-                        </span>
+                    <div className="flex items-start gap-3">
+                      <div className="mt-1.5">
+                        <span
+                          className={[
+                            "inline-block h-2 w-2 rounded-full",
+                            message.isRead ? "bg-muted-foreground/30" : "bg-primary",
+                          ].join(" ")}
+                        />
                       </div>
-                    </td>
-                    <td className="px-6 py-4 text-muted-foreground font-mono text-xs hidden md:table-cell">
-                      {message.subject}
-                    </td>
-                    <td className="px-6 py-4 text-muted-foreground font-mono text-xs hidden lg:table-cell">
-                      {formatDate(message.createdAt)}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="border-border/50 bg-card/95 backdrop-blur-xl max-w-2xl">
-                            <DialogHeader>
-                              <DialogTitle className="flex items-center gap-2">
-                                <span>Message #{message.id}</span>
-                                <Badge
-                                  variant={message.isRead ? "secondary" : "default"}
-                                  className="font-mono text-[10px] uppercase"
-                                >
-                                  {message.isRead ? "Read" : "Unread"}
-                                </Badge>
-                              </DialogTitle>
-                              <DialogDescription className="font-mono text-xs">
-                                Received {formatDate(message.createdAt)}
-                              </DialogDescription>
-                            </DialogHeader>
 
-                            <div className="space-y-4 text-sm">
-                              <div className="grid sm:grid-cols-2 gap-4">
-                                <div className="bg-card/40 border border-border/50 rounded-lg p-4">
-                                  <div className="text-muted-foreground font-mono text-[10px] uppercase mb-1">
-                                    From
-                                  </div>
-                                  <div className="font-medium">{message.name}</div>
-                                  <div className="text-muted-foreground font-mono text-xs break-all">
-                                    {message.email}
-                                  </div>
-                                </div>
-                                <div className="bg-card/40 border border-border/50 rounded-lg p-4">
-                                  <div className="text-muted-foreground font-mono text-[10px] uppercase mb-1">
-                                    Subject
-                                  </div>
-                                  <div className="font-medium">{message.subject}</div>
-                                </div>
-                              </div>
-
-                              <div className="bg-card/40 border border-border/50 rounded-lg p-4">
-                                <div className="text-muted-foreground font-mono text-[10px] uppercase mb-2">
-                                  Message
-                                </div>
-                                <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                                  {message.message}
-                                </pre>
-                              </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="font-medium truncate">
+                              {message.subject || "(No subject)"}
                             </div>
-                          </DialogContent>
-                        </Dialog>
+                            <div className="text-muted-foreground font-mono text-xs truncate">
+                              {message.name} • {message.email}
+                            </div>
+                          </div>
+                          <div className="text-muted-foreground font-mono text-[10px] whitespace-nowrap">
+                            {formatDate(message.createdAt)}
+                          </div>
+                        </div>
 
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
-                          onClick={() => toggleRead(message)}
-                          disabled={updateMessage.isPending}
-                        >
-                          {message.isRead ? (
-                            <Mail className="w-4 h-4" />
-                          ) : (
-                            <MailOpen className="w-4 h-4" />
-                          )}
-                        </Button>
-
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                              disabled={deleteMessage.isPending}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent className="border-border/50 bg-card/95 backdrop-blur-xl">
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Message</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Delete this message from {message.name}? This action
-                                cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel className="font-mono text-xs uppercase">
-                                Cancel
-                              </AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => remove(message.id)}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-mono text-xs uppercase"
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                        {preview ? (
+                          <div className="text-muted-foreground text-xs mt-2 line-clamp-2">
+                            {preview}
+                          </div>
+                        ) : null}
                       </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        <div className="bg-card/40 border border-border/50 rounded-xl overflow-hidden backdrop-blur-sm min-h-[320px]">
+          <div className="px-4 py-3 border-b border-border/50 bg-card/50 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="font-mono text-xs uppercase text-muted-foreground">
+                Message
+              </div>
+              {selected ? (
+                <Badge
+                  variant={selected.isRead ? "secondary" : "default"}
+                  className="font-mono text-[10px] uppercase"
+                >
+                  {selected.isRead ? "Read" : "Unread"}
+                </Badge>
+              ) : null}
+            </div>
+
+            {selected ? (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                  onClick={() => toggleRead(selected)}
+                  disabled={updateMessage.isPending}
+                  title={selected.isRead ? "Mark as unread" : "Mark as read"}
+                >
+                  {selected.isRead ? (
+                    <Mail className="w-4 h-4" />
+                  ) : (
+                    <MailOpen className="w-4 h-4" />
+                  )}
+                </Button>
+
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="h-8 px-3 font-mono text-xs uppercase text-muted-foreground hover:text-primary hover:bg-primary/10"
+                >
+                  <a
+                    href={`mailto:${selected.email}?subject=${encodeURIComponent(
+                      `Re: ${selected.subject || "Contact message"}`,
+                    )}`}
+                  >
+                    Reply
+                  </a>
+                </Button>
+
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                      disabled={deleteMessage.isPending}
+                      title="Delete message"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="border-border/50 bg-card/95 backdrop-blur-xl">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Message</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Delete this message from {selected.name}? This action cannot
+                        be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel className="font-mono text-xs uppercase">
+                        Cancel
+                      </AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => remove(selected.id)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-mono text-xs uppercase"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            ) : null}
+          </div>
+
+          {selected ? (
+            <div className="p-4 space-y-4">
+              <div className="space-y-1">
+                <div className="text-2xl font-display font-bold break-words">
+                  {selected.subject || "(No subject)"}
+                </div>
+                <div className="text-muted-foreground font-mono text-xs break-words">
+                  From {selected.name} • {selected.email} • {formatDate(selected.createdAt)}
+                </div>
+              </div>
+
+              <div className="bg-card/40 border border-border/50 rounded-lg p-4">
+                <div className="text-muted-foreground font-mono text-[10px] uppercase mb-2">
+                  Body
+                </div>
+                <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-relaxed max-h-[60vh] overflow-y-auto">
+                  {selected.message}
+                </pre>
+              </div>
+            </div>
+          ) : (
+            <div className="p-8 text-center text-muted-foreground">
+              Select a message to read.
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
-

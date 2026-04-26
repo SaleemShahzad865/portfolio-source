@@ -18,7 +18,7 @@ async function getExpressApp() {
 // Vercel Serverless Function entrypoint.
 // This file intentionally exports a default handler (req, res) compatible with Express.
 export default async function handler(req: any, res: any) {
-  const url = typeof req.url === "string" ? req.url : "";
+  const originalUrl = typeof req.url === "string" ? req.url : "";
   let expressApp: any;
 
   try {
@@ -35,17 +35,19 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
-  // If we reached this handler via a rewrite for `/uploads/*`, convert the internal
-  // Vercel path into the actual Express static mount.
-  if (url.startsWith("/api/uploads-static/")) {
-    req.url = url.replace("/api/uploads-static", "/uploads");
-    return expressApp(req, res);
-  }
-
   // Some runtimes forward `/api/*` as `/*` to the function. Normalize to keep our
   // existing Express mounting at `/api` working.
-  if (url && !url.startsWith("/api/") && url !== "/api") {
-    req.url = `/api${url.startsWith("/") ? "" : "/"}${url}`;
+  if (originalUrl && !originalUrl.startsWith("/api/") && originalUrl !== "/api") {
+    req.url = `/api${originalUrl.startsWith("/") ? "" : "/"}${originalUrl}`;
+  }
+
+  // If we reached this handler via a rewrite for `/uploads/*`, convert the internal
+  // Vercel path into the actual Express static mount.
+  // Note: this must happen *after* normalization, since some platforms invoke the
+  // function with `req.url` stripped of its `/api` prefix.
+  if (typeof req.url === "string" && req.url.startsWith("/api/uploads-static/")) {
+    req.url = req.url.replace("/api/uploads-static", "/uploads");
+    return expressApp(req, res);
   }
 
   // Defensive: avoid double-prefixes if a platform already included `/api` in `req.url`

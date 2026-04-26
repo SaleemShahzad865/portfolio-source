@@ -35,6 +35,7 @@ type UploadPurpose = "post_cover" | "project_image" | "generic";
 
 const uploadSpecs: Record<Exclude<UploadPurpose, "generic">, {
   label: string;
+  ratioLabel: string;
   aspect: number;
   minWidth: number;
   minHeight: number;
@@ -42,6 +43,7 @@ const uploadSpecs: Record<Exclude<UploadPurpose, "generic">, {
 }> = {
   post_cover: {
     label: "Post cover",
+    ratioLabel: "16:9",
     aspect: 16 / 9,
     minWidth: 1200,
     minHeight: 675,
@@ -49,10 +51,11 @@ const uploadSpecs: Record<Exclude<UploadPurpose, "generic">, {
   },
   project_image: {
     label: "Project image",
-    aspect: 16 / 10,
+    ratioLabel: "16:9",
+    aspect: 16 / 9,
     minWidth: 1200,
-    minHeight: 750,
-    examples: "1600x1000 or 1920x1200",
+    minHeight: 675,
+    examples: "1600x900 or 1920x1080",
   },
 };
 
@@ -162,7 +165,7 @@ router.post("/uploads", async (req, res): Promise<void> => {
     const maxAspect = spec.aspect * (1 + aspectTolerance);
     if (aspect < minAspect || aspect > maxAspect) {
       res.status(400).json({
-        error: `${spec.label} must be ${Math.round(spec.aspect * 100) / 100}:1 aspect ratio (recommended: ${spec.examples})`,
+        error: `${spec.label} must be ${spec.ratioLabel} aspect ratio (recommended: ${spec.examples})`,
       });
       return;
     }

@@ -219,7 +219,7 @@ export default function ProjectEditor() {
                         />
                       </label>
                       <div className="mt-2 text-[10px] font-mono text-muted-foreground">
-                        Project images: 16:10, min 1200x750 (recommended 1600x1000).
+                        Project images: 16:9, min 1200x675 (recommended 1600x900).
                       </div>
                     </div>
                     {field.value ? (
