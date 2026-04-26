@@ -7,8 +7,6 @@
 // single endpoint via `vercel.json` rewrites and reconstruct the intended
 // Express path from the `path` query parameter.
 
-import { URL } from "node:url";
-
 let cachedExpressApp: any | null = null;
 
 async function getExpressApp() {
@@ -37,18 +35,40 @@ export default async function handler(req: any, res: any) {
   }
 
   const rawUrl = typeof req.url === "string" ? req.url : "";
-  const parsed = new URL(rawUrl, "http://localhost");
+  const queryIndex = rawUrl.indexOf("?");
+  const rawQuery = queryIndex >= 0 ? rawUrl.slice(queryIndex + 1) : "";
 
-  const rewrittenPath = parsed.searchParams.get("path") ?? "";
-  parsed.searchParams.delete("path");
+  const queryParts = rawQuery ? rawQuery.split("&") : [];
+  const queryPairs: Array<[string, string]> = [];
+  let rewrittenPath = "";
+
+  for (const part of queryParts) {
+    if (!part) continue;
+    const eq = part.indexOf("=");
+    const rawKey = eq >= 0 ? part.slice(0, eq) : part;
+    const rawValue = eq >= 0 ? part.slice(eq + 1) : "";
+
+    const key = decodeURIComponent(rawKey.replace(/\+/g, " "));
+    const value = decodeURIComponent(rawValue.replace(/\+/g, " "));
+
+    if (key === "path") {
+      rewrittenPath = value;
+      continue;
+    }
+
+    queryPairs.push([key, value]);
+  }
 
   const cleanedPath = rewrittenPath
     .split("/")
     .filter(Boolean)
     .join("/");
 
-  const search = parsed.searchParams.toString();
-  const suffix = search ? `?${search}` : "";
+  const suffix = queryPairs.length
+    ? `?${queryPairs
+        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+        .join("&")}`
+    : "";
 
   req.url = cleanedPath ? `/api/${cleanedPath}${suffix}` : `/api${suffix}`;
 
