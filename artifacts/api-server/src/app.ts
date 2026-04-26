@@ -1,4 +1,4 @@
-import express, { type Express } from "express";
+import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
@@ -9,7 +9,7 @@ import { logger } from "./lib/logger";
 import { authMiddleware } from "./middlewares/authMiddleware";
 import { frontendDistDir, uploadsDir } from "./lib/runtimePaths";
 
-const app: Express = express();
+const app = express();
 
 app.use(
   pinoHttp({
