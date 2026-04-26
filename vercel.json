@@ -5,7 +5,7 @@
   "outputDirectory": "artifacts/portfolio/dist/public",
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api?path=:path*" },
-    { "source": "/uploads/:path*", "destination": "/api/uploads-static/:path*" },
+    { "source": "/uploads/:path*", "destination": "/api?path=uploads-static/:path*" },
     { "source": "/:path((?!api(?:/|$)).*)", "destination": "/index.html" }
   ]
 }
