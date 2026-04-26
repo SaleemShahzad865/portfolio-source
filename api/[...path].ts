@@ -1,3 +1,6 @@
+// Vercel's TypeScript build for Serverless Functions is stricter than our app's tsconfig
+// and requires declarations for ESM `.mjs` imports. The bundled Express app is runtime-safe.
+// @ts-expect-error - bundled ESM module has no `.d.ts` during Vercel build
 import app from "../artifacts/api-server/dist/app.mjs";
 
 // Vercel Serverless Function entrypoint.
