@@ -4,7 +4,7 @@ import { createSession, deleteSession, getSession } from "../lib/store";
 
 const router: IRouter = Router();
 
-router.get("/auth/user", async (req: Request, res: Response) => {
+router.get(["/auth/user", "/session/user"], async (req: Request, res: Response) => {
   const sid = req.cookies?.sid;
   const session = sid ? await getSession(sid) : null;
 
@@ -19,7 +19,7 @@ router.get("/login", (_req: Request, res: Response) => {
   res.redirect("/admin/login");
 });
 
-router.post("/auth/login", async (req: Request, res: Response) => {
+router.post(["/auth/login", "/session/login"], async (req: Request, res: Response) => {
   const email =
     typeof req.body?.email === "string" ? req.body.email.trim() : "";
   const password =

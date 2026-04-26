@@ -21,7 +21,15 @@ export function useAuth(): AuthState {
   useEffect(() => {
     let cancelled = false;
 
-    fetch("/api/auth/user", { credentials: "include" })
+    fetch("/api/session/user", { credentials: "include" })
+      .then((res) => {
+        // Vercel reserves `/api/auth/*` for its own platform auth in some cases.
+        // Keep a fallback to the legacy endpoint for non-Vercel hosts / older deployments.
+        if (res.status === 404) {
+          return fetch("/api/auth/user", { credentials: "include" });
+        }
+        return res;
+      })
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json() as Promise<{ user: AuthUser | null }>;
@@ -48,14 +56,23 @@ export function useAuth(): AuthState {
     email: string;
     password: string;
   }) => {
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
+    const doLogin = async (url: string) => {
+      return fetch(url, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      });
+    };
+
+    let response = await doLogin("/api/session/login");
+
+    // Legacy fallback (see comment above).
+    if (response.status === 404) {
+      response = await doLogin("/api/auth/login");
+    }
 
     const payload = (await response.json().catch(() => null)) as
       | { user?: AuthUser | null; error?: string }

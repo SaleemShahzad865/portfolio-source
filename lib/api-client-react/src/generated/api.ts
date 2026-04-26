@@ -143,7 +143,7 @@ export const getGetCurrentAuthUserUrl = () => {
 
 
 
-  return `/api/auth/user`
+  return `/api/session/user`
 }
 
 export const getCurrentAuthUser = async ( options?: RequestInit): Promise<AuthUserEnvelope> => {
@@ -163,7 +163,7 @@ export const getCurrentAuthUser = async ( options?: RequestInit): Promise<AuthUs
 
 export const getGetCurrentAuthUserQueryKey = () => {
     return [
-    `/api/auth/user`
+    `/api/session/user`
     ] as const;
     }
 
@@ -2163,4 +2163,3 @@ export const useUpsertSection = <TError = ErrorType<ErrorEnvelope>,
       > => {
       return useMutation(getUpsertSectionMutationOptions(options));
     }
-
