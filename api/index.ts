@@ -7,6 +7,8 @@
 // single endpoint via `vercel.json` rewrites and reconstruct the intended
 // Express path from the `path` query parameter.
 
+import { URL } from "node:url";
+
 let cachedExpressApp: any | null = null;
 
 async function getExpressApp() {
@@ -58,4 +60,3 @@ export default async function handler(req: any, res: any) {
 
   return expressApp(req, res);
 }
-
