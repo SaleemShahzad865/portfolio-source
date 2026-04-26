@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "corepack enable && pnpm install --frozen-lockfile",
+  "buildCommand": "corepack enable && pnpm install --frozen-lockfile && BASE_PATH=/ pnpm -C artifacts/portfolio run build",
+  "outputDirectory": "artifacts/portfolio/dist/public",
+  "rewrites": [
+    { "source": "/uploads/:path*", "destination": "/api/uploads-static/:path*" },
+    { "source": "/:path((?!api(?:/|$)).*)", "destination": "/index.html" }
+  ]
+}

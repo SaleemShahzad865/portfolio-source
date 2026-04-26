@@ -1,0 +1,557 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "slug": "designing-first-4-layer-pcb",
+      "title": "Designing Your First 4-Layer PCB",
+      "excerpt": "Moving from 2 to 4 layers unlocks better signal integrity, power delivery, and compactness. Here's a step-by-step guide to making the jump.",
+      "coverImage": "/images/blog-pcb-design.png",
+      "publishedAt": "2024-05-12",
+      "readTimeMinutes": 8,
+      "tags": [
+        "PCB Design",
+        "Hardware",
+        "Altium"
+      ],
+      "isPublished": true,
+      "content": "Moving from 2 to 4 layers is a significant milestone for any hardware engineer. The transition not only allows you to build more compact boards but radically improves your electromagnetic compatibility (EMC) and signal integrity (SI).\n\n### Why 4 Layers?\n\nIn a standard 2-layer board, routing power and ground can be a nightmare. You often end up with a Swiss-cheese ground plane, which creates huge return current loops. These loops radiate noise and make your board susceptible to external interference.\n\nWith 4 layers, you can dedicate entire internal layers to solid power and ground planes.\n\n### The Stackup\n\nThe most common 4-layer stackup is:\n1. **Top Layer:** Signal / High-speed routing\n2. **Inner Layer 1:** Solid Ground (GND) Plane\n3. **Inner Layer 2:** Power (VCC) Plane / Split Power Planes\n4. **Bottom Layer:** Signal / Low-speed routing\n\nBy placing the GND plane immediately adjacent to the top signal layer, every high-speed trace on the top has a perfectly defined, uninterrupted return path directly underneath it.\n\n### Best Practices\n\n- **Keep the GND plane solid.** Do not route signals on the ground plane.\n- **Stitch your planes.** Use vias to connect ground pours on the top and bottom layers to the internal ground plane.\n- **Decoupling capacitors.** Place them as close as possible to the IC pins, and drop their ground connections directly to the internal plane with a via.\n\nDesigning 4-layer boards might seem daunting due to the increased manufacturing cost, but the benefits in reliability and performance are well worth it for any serious project.",
+      "createdAt": "2026-04-25T10:29:36.392Z",
+      "updatedAt": "2026-04-25T10:29:36.392Z"
+    },
+    {
+      "id": 2,
+      "slug": "esp32-vs-arduino-choosing-right-board",
+      "title": "ESP32 vs Arduino: Choosing the Right Board",
+      "excerpt": "The Arduino Uno is a classic, but the ESP32 is a powerhouse. When should you use which for your next IoT project?",
+      "coverImage": "/images/blog-esp32-arduino.png",
+      "publishedAt": "2024-04-28",
+      "readTimeMinutes": 6,
+      "tags": [
+        "ESP32",
+        "Arduino",
+        "IoT"
+      ],
+      "isPublished": true,
+      "content": "The microcontroller landscape has exploded in recent years, but two names constantly come up in the maker and prototyping communities: Arduino and the ESP32.\n\n### The Arduino Uno: The Old Reliable\n\n**Pros:**\n- **5V Logic:** Interfaces easily with a massive legacy ecosystem of sensors, relays, and logic chips without needing level shifters.\n- **Simplicity:** No RTOS, no complex clock trees. It runs your loop() and nothing else.\n- **Robustness:** The ATmega chips are incredibly tough.\n\n**Cons:**\n- **Slow:** 16 MHz.\n- **No Connectivity:** No built-in Wi-Fi or Bluetooth.\n- **Memory:** 2KB of SRAM is stifling for modern applications.\n\n### The ESP32: The Modern Powerhouse\n\n**Pros:**\n- **Speed & Power:** Dual-core 240 MHz processor.\n- **Connectivity:** Built-in Wi-Fi and Bluetooth.\n- **Memory:** 520KB SRAM, plus often MBs of external flash.\n- **Peripherals:** Multiple UART/SPI/I2C buses and plenty of extras.\n\n### The Verdict\n\nIf you are building a simple mechanical controller, the Arduino is still a great, robust choice.\n\nIf your device needs to talk to the internet, process audio, serve a webpage, or do heavy math, the ESP32 is the stronger option.",
+      "createdAt": "2026-04-25T10:29:36.392Z",
+      "updatedAt": "2026-04-25T10:29:36.392Z"
+    },
+    {
+      "id": 3,
+      "slug": "low-power-tricks-battery-iot",
+      "title": "Low-Power Tricks for Battery-Powered IoT",
+      "excerpt": "Squeezing months or years out of a single battery requires rethinking both your hardware design and firmware architecture.",
+      "coverImage": "/images/blog-low-power.png",
+      "publishedAt": "2024-03-15",
+      "readTimeMinutes": 10,
+      "tags": [
+        "Power Design",
+        "Firmware",
+        "IoT"
+      ],
+      "isPublished": true,
+      "content": "Building an IoT device that plugs into the wall is easy. Building one that runs for two years on a coin cell or a small LiPo requires absolute paranoia about every microamp.\n\n### Hardware Tricks\n\n1. **Kill the Quiescent Current (Iq):** Every voltage regulator consumes power just by existing.\n2. **Load Switches:** Don't just put sensors to sleep; physically cut their power.\n3. **Pull-up/Pull-down Resistors:** Use higher values when speed isn't an issue.\n\n### Firmware Tricks\n\n1. **Sleep 99.9% of the Time:** Your MCU should be in its deepest sleep state almost constantly.\n2. **Race to Sleep:** Run your MCU clock faster so you finish calculations and return to deep sleep sooner.\n3. **Smart Radio Usage:** Batch your data instead of transmitting on every sample.",
+      "createdAt": "2026-04-25T10:29:36.392Z",
+      "updatedAt": "2026-04-25T10:29:36.392Z"
+    },
+    {
+      "id": 4,
+      "slug": "fytcygc",
+      "title": "1jbjib",
+      "excerpt": "buivbjkb jk",
+      "coverImage": "/uploads/1777115889467-anatomy_skeleton_on_202604061401-9f4d4ede.jpg",
+      "publishedAt": "2026-04-25",
+      "readTimeMinutes": 5,
+      "tags": [],
+      "content": "bjibhjvhjvhj",
+      "isPublished": true,
+      "createdAt": "2026-04-25T11:18:28.098Z",
+      "updatedAt": "2026-04-25T11:18:28.098Z"
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "title": "High-Speed Data Acquisition PCB",
+      "description": "Custom 6-layer PCB design for industrial data logging. Features an STM32H7, precise analog front-end, and gigabit ethernet PHY.",
+      "image": "/images/project-1.png",
+      "tags": [
+        "Altium",
+        "STM32",
+        "High-Speed Routing",
+        "Analog Design"
+      ],
+      "link": "https://github.com/saleemshahzad",
+      "sortOrder": 1,
+      "createdAt": "2026-04-25T10:29:36.392Z",
+      "updatedAt": "2026-04-25T10:29:36.392Z",
+      "details": "Custom 6-layer PCB design for industrial data logging. Features an STM32H7, precise analog front-end, and gigabit ethernet PHY.",
+      "category": "pcb"
+    },
+    {
+      "id": 2,
+      "title": "ESP32 Distributed Weather Station",
+      "description": "A network of solar-powered environmental nodes communicating via ESP-NOW. Central hub pushes aggregated data to the cloud.",
+      "image": "/images/project-2.png",
+      "tags": [
+        "ESP32",
+        "ESP-NOW",
+        "FreeRTOS",
+        "Solar Power"
+      ],
+      "link": "https://github.com/saleemshahzad",
+      "sortOrder": 2,
+      "createdAt": "2026-04-25T10:29:36.392Z",
+      "updatedAt": "2026-04-25T10:29:36.392Z",
+      "details": "A network of solar-powered environmental nodes communicating via ESP-NOW. Central hub pushes aggregated data to the cloud.",
+      "category": "esp32"
+    },
+    {
+      "id": 3,
+      "title": "Smart Home Automation Hub",
+      "description": "Arduino Mega based centralized home automation controller with custom relay shield, supporting MQTT and physical fallback switches.",
+      "image": "/images/project-3.png",
+      "tags": [
+        "Arduino C++",
+        "MQTT",
+        "Relay Control",
+        "Home Assistant"
+      ],
+      "link": "https://github.com/saleemshahzad",
+      "sortOrder": 3,
+      "createdAt": "2026-04-25T10:29:36.392Z",
+      "updatedAt": "2026-04-25T10:29:36.392Z",
+      "details": "Arduino Mega based centralized home automation controller with custom relay shield, supporting MQTT and physical fallback switches.",
+      "category": "arduino"
+    },
+    {
+      "id": 4,
+      "title": "Upload Test",
+      "description": "desc",
+      "details": "details",
+      "image": "/uploads/1777115265645-tiny-780c10d5.png",
+      "tags": [
+        "t"
+      ],
+      "link": "https://example.com",
+      "sortOrder": 99,
+      "createdAt": "2026-04-25T11:07:45.754Z",
+      "updatedAt": "2026-04-25T11:07:45.754Z",
+      "category": "iot"
+    },
+    {
+      "id": 5,
+      "title": "Cat test",
+      "description": "Desc",
+      "image": "/uploads/x.png",
+      "tags": [
+        "t1"
+      ],
+      "link": "",
+      "category": "simulation",
+      "sortOrder": 9,
+      "details": "",
+      "createdAt": "2026-04-25T18:02:16.788Z",
+      "updatedAt": "2026-04-25T18:02:16.788Z"
+    },
+    {
+      "id": 6,
+      "title": "nonihbhbhb",
+      "description": "jbkj k bkbkbkjbj j",
+      "image": "",
+      "tags": [],
+      "link": "",
+      "category": "simulation",
+      "sortOrder": 0,
+      "details": "",
+      "createdAt": "2026-04-25T18:27:19.154Z",
+      "updatedAt": "2026-04-25T18:27:19.154Z"
+    }
+  ],
+  "sections": [
+    {
+      "key": "home_name",
+      "value": "Saleem Shahzad",
+      "updatedAt": "2026-04-25T10:29:36.392Z"
+    },
+    {
+      "key": "home_role",
+      "value": "Electrical Engineer - Embedded Systems",
+      "updatedAt": "2026-04-25T10:29:36.392Z"
+    },
+    {
+      "key": "home_tagline",
+      "value": "I design circuits, lay out PCBs, and write firmware that brings hardware to life. Specializing in Arduino, ESP32, and production-ready embedded systems.",
+      "updatedAt": "2026-04-25T10:29:36.392Z"
+    },
+    {
+      "key": "about_intro",
+      "value": "I am an electrical engineer focused on the place where hardware and software meet. I enjoy building systems that behave well in the real world, not just on paper.",
+      "updatedAt": "2026-04-25T10:29:36.392Z"
+    },
+    {
+      "key": "about_philosophy",
+      "value": "Embedded systems engineering is about constraints: power, timing, memory, and reliability. I approach every project with a system-level mindset so the board layout, firmware behavior, and product goals all support each other.",
+      "updatedAt": "2026-04-25T10:29:36.392Z"
+    },
+    {
+      "key": "contact_email",
+      "value": "saleemwork123@gmail.com",
+      "updatedAt": "2026-04-25T17:31:18.588Z"
+    },
+    {
+      "key": "contact_location",
+      "value": "Pakistan",
+      "updatedAt": "2026-04-25T10:29:36.392Z"
+    },
+    {
+      "key": "contact_github",
+      "value": "https://github.com/saleemshahzad",
+      "updatedAt": "2026-04-25T10:29:36.392Z"
+    },
+    {
+      "key": "contact_linkedin",
+      "value": "https://linkedin.com/in/saleemshahzad",
+      "updatedAt": "2026-04-25T10:29:36.392Z"
+    },
+    {
+      "key": "skills_config",
+      "value": "{\"categories\":[{\"id\":\"embedded\",\"title\":\"Embedded Systems\",\"icon\":\"Cpu\",\"skills\":[{\"id\":\"mcu\",\"name\":\"Microcontrollers (STM32, AVR, PIC)\",\"level\":88},{\"id\":\"esp\",\"name\":\"ESP32 & ESP8266\",\"level\":90},{\"id\":\"rtos\",\"name\":\"RTOS (FreeRTOS, Zephyr)\",\"level\":85},{\"id\":\"baremetal\",\"name\":\"Bare-metal Programming\",\"level\":90},{\"id\":\"lowpower\",\"name\":\"Low Power Optimization\",\"level\":80}]},{\"id\":\"hardware\",\"title\":\"PCB & Hardware\",\"icon\":\"CircuitBoard\",\"skills\":[{\"id\":\"cad\",\"name\":\"Altium Designer / KiCad\",\"level\":90},{\"id\":\"hs\",\"name\":\"High-Speed Routing\",\"level\":75},{\"id\":\"circuits\",\"name\":\"Analog & Digital Circuit Design\",\"level\":85},{\"id\":\"emc\",\"name\":\"EMI/EMC Compliance\",\"level\":70},{\"id\":\"rework\",\"name\":\"Soldering & SMD Rework\",\"level\":95}]},{\"id\":\"programming\",\"title\":\"Programming\",\"icon\":\"Code2\",\"skills\":[{\"id\":\"cpp\",\"name\":\"C / C++\",\"level\":95},{\"id\":\"py\",\"name\":\"Python\",\"level\":85},{\"id\":\"asm\",\"name\":\"Assembly\",\"level\":65},{\"id\":\"rust\",\"name\":\"Rust (Embedded)\",\"level\":60}]},{\"id\":\"tools\",\"title\":\"Protocols & Tools\",\"icon\":\"Radio\",\"skills\":[{\"id\":\"buses\",\"name\":\"I2C, SPI, UART, CAN, Modbus\",\"level\":95},{\"id\":\"rf\",\"name\":\"BLE, Wi-Fi, LoRa, MQTT\",\"level\":85},{\"id\":\"lab\",\"name\":\"Oscilloscopes & Logic Analyzers\",\"level\":90},{\"id\":\"git\",\"name\":\"Git & CI/CD\",\"level\":80}]}]}",
+      "updatedAt": "2026-04-25T16:38:42.270Z"
+    },
+    {
+      "key": "about_timeline",
+      "value": "[\n  {\n    \"role\": \"Iot Engineer\",\n    \"period\": \"2202-2011\",\n    \"desc\": \"519292929411\",\n    \"active\": true\n  }\n]",
+      "updatedAt": "2026-04-25T18:45:13.908Z"
+    },
+    {
+      "key": "home_hero_image",
+      "value": "/uploads/1777180555649-generated-image-december-07-2025---6_17pm-354ded1b.png",
+      "updatedAt": "2026-04-26T05:15:59.411Z"
+    },
+    {
+      "key": "home_featured_projects",
+      "value": "[\n  1,\n  2,\n  3\n]",
+      "updatedAt": "2026-04-26T05:17:28.048Z"
+    },
+    {
+      "key": "home_featured_posts",
+      "value": "[\n  \"designing-first-4-layer-pcb\",\n  \"esp32-vs-arduino-choosing-right-board\",\n  \"low-power-tricks-battery-iot\"\n]",
+      "updatedAt": "2026-04-26T05:17:49.462Z"
+    },
+    {
+      "key": "resume_url",
+      "value": "/uploads/1777182314496-saleemshahzad_resume-embedded-systems-15610002.pdf",
+      "updatedAt": "2026-04-26T05:48:03.220Z"
+    },
+    {
+      "key": "home_testimonials",
+      "value": "[\n  {\n    \"image\": \"\",\n    \"name\": \"saleem\",\n    \"designation\": \"ceo\",\n    \"company\": \"iot\",\n    \"message\": \"good work ,. c,.z.,,hlghalgadhgadgiaglaghaglaigbailgabgaiogaigoaebgaighaiogahgiohgioaghiogbiogbgiogneaigeabgioaebgeaiogbeaigaebigoebgfioebgeigbgieogbeaiogbeilgbaiglaebgieabgiaegbaeigbaigobaegilebgiaebgiaegbaiogbiogbeibgibgigbilgbeigebigehgopeghipeghoqepghqeo[ghoqepghepghqepogehnogpebngopebgopebgpqebgpegbopqegbqepgbqepigbepaigbeipgbeipgbeiogbqeigqefejjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjppppppppefeafbeiglebgilegbeigbeigoebgiogbigbeigbeopgbegpeabgpibgigbigbegbogpgophngopgopgneopgboepgboepgboepgboepgbeopgbeopgeopghaengioejgoegeoauighaepgheghea\\\\\\nhea4g5eg5ieagegfepgiheiooie\"\n  }\n]",
+      "updatedAt": "2026-04-26T09:24:40.326Z"
+    },
+    {
+      "key": "home_clients_ticker",
+      "value": "[\n  {\n    \"name\": \"goo\",\n    \"logo\": \"/uploads/1777193689830-imagetostl-com_base-740d281f.jpg\",\n    \"url\": \"\"\n  }\n]",
+      "updatedAt": "2026-04-26T08:54:50.485Z"
+    }
+  ],
+  "sessions": [
+    {
+      "sid": "e3ec40fb14389cec29e67eaebacb6f85ca26cbb920144e9d7b1bc6b1fa48a507",
+      "user": {
+        "id": "local-admin",
+        "email": "admin@example.com",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T10:31:31.354Z"
+    },
+    {
+      "sid": "9d798fce9f1dc904c6d37776192cc64a6705f1e2a19a504e9a8cb57a05d68ccc",
+      "user": {
+        "id": "local-admin",
+        "email": "admin@example.com",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T10:37:39.652Z"
+    },
+    {
+      "sid": "bd6775c7242e59da5f97b689f73490a5d2bf37bfb0ac343c68e04c842d6b3604",
+      "user": {
+        "id": "local-admin",
+        "email": "admin@example.com",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T10:51:32.918Z"
+    },
+    {
+      "sid": "f089540eaa8ff6e9132fb88c6fb19da6d9bc71dca02bbe608bbad59dc3000468",
+      "user": {
+        "id": "local-admin",
+        "email": "admin@example.com",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T11:07:13.661Z"
+    },
+    {
+      "sid": "9cf74aacd44aecf2916dfa4fb7d1ec411f7d8349445ea2884044d19d2b92ee5a",
+      "user": {
+        "id": "local-admin",
+        "email": "admin@example.com",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T11:07:45.501Z"
+    },
+    {
+      "sid": "e5765703ddeccf218b1b8ca9f3e35c4cd973ed20b1aa2d90fd2222d07cde9d4f",
+      "user": {
+        "id": "local-admin",
+        "email": "admin@example.com",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T11:14:06.651Z"
+    },
+    {
+      "sid": "459dcd20b7b2da596407c03d7d157c36f0aefde5be5211e90c6c528a6a6a29f8",
+      "user": {
+        "id": "local-admin",
+        "email": "admin@example.com",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T11:14:06.655Z"
+    },
+    {
+      "sid": "365b6ba3363c950a98295d99f05bb0e2305d8522bb672bda9884b63fdfd150b1",
+      "user": {
+        "id": "local-admin",
+        "email": "admin@example.com",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T11:15:09.172Z"
+    },
+    {
+      "sid": "a4b10dada98c164f80fe35c6d27dde0555419d29ad6f171ebcf2f3505c80275e",
+      "user": {
+        "id": "local-admin",
+        "email": "saleem2003",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T11:38:55.628Z"
+    },
+    {
+      "sid": "367dd1e4efc17ef6fcd0d22065d8708755714fa844e025e0bedfd9cc0dc8cb8f",
+      "user": {
+        "id": "local-admin",
+        "email": "saleem2003",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T11:38:55.648Z"
+    },
+    {
+      "sid": "17011ecfee05ddcd2329739ddd041303ba0624beb8e6f2e8f2dbf2b2c18f976d",
+      "user": {
+        "id": "local-admin",
+        "email": "x",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T11:38:55.673Z"
+    },
+    {
+      "sid": "421593a587f5e15d82f8d2b432647039c586df923f0cee0754cd9bc8e7d0cfb3",
+      "user": {
+        "id": "local-admin",
+        "email": "saleem2003",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T11:46:42.252Z"
+    },
+    {
+      "sid": "86fd017c1bc06e55167f4f55599dce72d5ffd527b5b3c50eea48f2b48da2de31",
+      "user": {
+        "id": "local-admin",
+        "email": "saleem2003",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T16:21:57.324Z"
+    },
+    {
+      "sid": "62dd27ce708d1138619d16487746a651fc4afc4cf109ebf9e452fd5b51f652ae",
+      "user": {
+        "id": "local-admin",
+        "email": "saleem2003",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T16:21:59.304Z"
+    },
+    {
+      "sid": "8eae258a713351291cc31d042c4f04fc481c82a4ef6c821bf9100767c256d2a8",
+      "user": {
+        "id": "local-admin",
+        "email": "saleem2003",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T16:22:00.741Z"
+    },
+    {
+      "sid": "2c914f914c497177aac2bf2c439bbf8d163f930963de293dcde395ecab79a72f",
+      "user": {
+        "id": "local-admin",
+        "email": "saleem2003",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T16:22:02.636Z"
+    },
+    {
+      "sid": "263a7518c65050a83cef2cd6cc2f3a4f803a7b1e5997c8c89027eb8adab4dcb3",
+      "user": {
+        "id": "local-admin",
+        "email": "saleem2003",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T16:22:25.250Z"
+    },
+    {
+      "sid": "5509e6a7d65d57ecb4d4969bb04570d3cfdbe205051a67433e6d982c25fe158b",
+      "user": {
+        "id": "local-admin",
+        "email": "saleem2003",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T16:23:45.360Z"
+    },
+    {
+      "sid": "1e60fbde8ef790180f47e4dbcd95a589a1ecefea2c405af5affae772bd4e80c1",
+      "user": {
+        "id": "local-admin",
+        "email": null,
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T16:27:10.588Z"
+    },
+    {
+      "sid": "969beaeaaef5515cf1b9b0e5e58c3ced6925d999f15fd39e7dd1089e65c8989b",
+      "user": {
+        "id": "local-admin",
+        "email": null,
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T16:28:54.623Z"
+    },
+    {
+      "sid": "f02998d65d8451e847fd6ceb0c3cdabdc01c797ec925b58b31a6fe906757c917",
+      "user": {
+        "id": "local-admin",
+        "email": null,
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T16:29:05.085Z"
+    },
+    {
+      "sid": "f125730af4fc3930a7264cd8dd9e05001ea96fdae0dcdbbb11bd00a8cd8d31ba",
+      "user": {
+        "id": "local-admin",
+        "email": null,
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T16:29:50.274Z"
+    },
+    {
+      "sid": "ba22b9bc7180dc380025e3a32bbc3ac2932bae24486d9877a5ec72750ed07cc6",
+      "user": {
+        "id": "local-admin",
+        "email": null,
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T16:30:30.653Z"
+    },
+    {
+      "sid": "dd741521744cf57e3ad7fda05639b59560bcc5053d96daa60bde908e34e5d1df",
+      "user": {
+        "id": "local-admin",
+        "email": null,
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T16:38:42.066Z"
+    },
+    {
+      "sid": "219707a278ce6ebd0fa6d2b10416a0a80781ac449add2a8fd62e9257b44a12a2",
+      "user": {
+        "id": "local-admin",
+        "email": null,
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T17:31:18.474Z"
+    },
+    {
+      "sid": "17fc3260d459bd05f69fbf152351685971bf364e078d6829bc7f74e24be90d76",
+      "user": {
+        "id": "local-admin",
+        "email": null,
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T18:02:16.565Z"
+    }
+  ],
+  "contactMessages": [
+    {
+      "id": 1,
+      "name": "vdsbidbvjkd",
+      "email": "cdjahhjc@gmail.com",
+      "subject": "hfvhdbibakjvad",
+      "message": "aebfkabvjkabvkjbadjkvbkjdbjkv",
+      "isRead": true,
+      "createdAt": "2026-04-26T07:52:15.250Z"
+    }
+  ]
+}

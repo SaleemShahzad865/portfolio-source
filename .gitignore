@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+**/node_modules/
+
+# builds
+artifacts/**/dist/
+artifacts/**/.replit-artifact/
+lib/**/dist/
+
+# runtime uploads (store these externally for production)
+artifacts/api-server/public/uploads/
+portfolio/public/uploads/
+artifacts/portfolio/public/uploads/
+
+# logs
+*.log
+
+# env / secrets
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,213 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "slug": "designing-first-4-layer-pcb",
+      "title": "Designing Your First 4-Layer PCB",
+      "excerpt": "Moving from 2 to 4 layers unlocks better signal integrity, power delivery, and compactness. Here's a step-by-step guide to making the jump.",
+      "coverImage": "/images/blog-pcb-design.png",
+      "publishedAt": "2024-05-12",
+      "readTimeMinutes": 8,
+      "tags": [
+        "PCB Design",
+        "Hardware",
+        "Altium"
+      ],
+      "isPublished": true,
+      "content": "Moving from 2 to 4 layers is a significant milestone for any hardware engineer. The transition not only allows you to build more compact boards but radically improves your electromagnetic compatibility (EMC) and signal integrity (SI).\n\n### Why 4 Layers?\n\nIn a standard 2-layer board, routing power and ground can be a nightmare. You often end up with a Swiss-cheese ground plane, which creates huge return current loops. These loops radiate noise and make your board susceptible to external interference.\n\nWith 4 layers, you can dedicate entire internal layers to solid power and ground planes.\n\n### The Stackup\n\nThe most common 4-layer stackup is:\n1. **Top Layer:** Signal / High-speed routing\n2. **Inner Layer 1:** Solid Ground (GND) Plane\n3. **Inner Layer 2:** Power (VCC) Plane / Split Power Planes\n4. **Bottom Layer:** Signal / Low-speed routing\n\nBy placing the GND plane immediately adjacent to the top signal layer, every high-speed trace on the top has a perfectly defined, uninterrupted return path directly underneath it.\n\n### Best Practices\n\n- **Keep the GND plane solid.** Do not route signals on the ground plane.\n- **Stitch your planes.** Use vias to connect ground pours on the top and bottom layers to the internal ground plane.\n- **Decoupling capacitors.** Place them as close as possible to the IC pins, and drop their ground connections directly to the internal plane with a via.\n\nDesigning 4-layer boards might seem daunting due to the increased manufacturing cost, but the benefits in reliability and performance are well worth it for any serious project.",
+      "createdAt": "2026-04-25T11:43:36.730Z",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "id": 2,
+      "slug": "esp32-vs-arduino-choosing-right-board",
+      "title": "ESP32 vs Arduino: Choosing the Right Board",
+      "excerpt": "The Arduino Uno is a classic, but the ESP32 is a powerhouse. When should you use which for your next IoT project?",
+      "coverImage": "/images/blog-esp32-arduino.png",
+      "publishedAt": "2024-04-28",
+      "readTimeMinutes": 6,
+      "tags": [
+        "ESP32",
+        "Arduino",
+        "IoT"
+      ],
+      "isPublished": true,
+      "content": "The microcontroller landscape has exploded in recent years, but two names constantly come up in the maker and prototyping communities: Arduino and the ESP32.\n\n### The Arduino Uno: The Old Reliable\n\n**Pros:**\n- **5V Logic:** Interfaces easily with a massive legacy ecosystem of sensors, relays, and logic chips without needing level shifters.\n- **Simplicity:** No RTOS, no complex clock trees. It runs your loop() and nothing else.\n- **Robustness:** The ATmega chips are incredibly tough.\n\n**Cons:**\n- **Slow:** 16 MHz.\n- **No Connectivity:** No built-in Wi-Fi or Bluetooth.\n- **Memory:** 2KB of SRAM is stifling for modern applications.\n\n### The ESP32: The Modern Powerhouse\n\n**Pros:**\n- **Speed & Power:** Dual-core 240 MHz processor.\n- **Connectivity:** Built-in Wi-Fi and Bluetooth.\n- **Memory:** 520KB SRAM, plus often MBs of external flash.\n- **Peripherals:** Multiple UART/SPI/I2C buses and plenty of extras.\n\n### The Verdict\n\nIf you are building a simple mechanical controller, the Arduino is still a great, robust choice.\n\nIf your device needs to talk to the internet, process audio, serve a webpage, or do heavy math, the ESP32 is the stronger option.",
+      "createdAt": "2026-04-25T11:43:36.730Z",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "id": 3,
+      "slug": "low-power-tricks-battery-iot",
+      "title": "Low-Power Tricks for Battery-Powered IoT",
+      "excerpt": "Squeezing months or years out of a single battery requires rethinking both your hardware design and firmware architecture.",
+      "coverImage": "/images/blog-low-power.png",
+      "publishedAt": "2024-03-15",
+      "readTimeMinutes": 10,
+      "tags": [
+        "Power Design",
+        "Firmware",
+        "IoT"
+      ],
+      "isPublished": true,
+      "content": "Building an IoT device that plugs into the wall is easy. Building one that runs for two years on a coin cell or a small LiPo requires absolute paranoia about every microamp.\n\n### Hardware Tricks\n\n1. **Kill the Quiescent Current (Iq):** Every voltage regulator consumes power just by existing.\n2. **Load Switches:** Don't just put sensors to sleep; physically cut their power.\n3. **Pull-up/Pull-down Resistors:** Use higher values when speed isn't an issue.\n\n### Firmware Tricks\n\n1. **Sleep 99.9% of the Time:** Your MCU should be in its deepest sleep state almost constantly.\n2. **Race to Sleep:** Run your MCU clock faster so you finish calculations and return to deep sleep sooner.\n3. **Smart Radio Usage:** Batch your data instead of transmitting on every sample.",
+      "createdAt": "2026-04-25T11:43:36.730Z",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "title": "High-Speed Data Acquisition PCB",
+      "description": "Custom 6-layer PCB design for industrial data logging. Features an STM32H7, precise analog front-end, and gigabit ethernet PHY.",
+      "details": "### System Overview\n\nThis project focused on stable high-speed capture in a compact industrial form factor.\n\n- 6-layer stackup for cleaner return paths\n- STM32H7 processing pipeline\n- Ethernet uplink for remote collection\n- Careful analog partitioning around the front-end\n\nThe full design balanced signal integrity, thermal behavior, and serviceability.",
+      "image": "/images/project-1.png",
+      "tags": [
+        "Altium",
+        "STM32",
+        "High-Speed Routing",
+        "Analog Design"
+      ],
+      "link": "https://github.com/saleemshahzad",
+      "sortOrder": 1,
+      "createdAt": "2026-04-25T11:43:36.730Z",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "id": 2,
+      "title": "ESP32 Distributed Weather Station",
+      "description": "A network of solar-powered environmental nodes communicating via ESP-NOW. Central hub pushes aggregated data to the cloud.",
+      "details": "### Field Deployment\n\nThis system was designed around low-power outdoor telemetry.\n\n- Solar-friendly duty cycle\n- Distributed sensing nodes\n- Resilient short-range wireless transport\n- Central aggregation and reporting\n\nThe main challenge was balancing sampling frequency with power budget and weather exposure.",
+      "image": "/images/project-2.png",
+      "tags": [
+        "ESP32",
+        "ESP-NOW",
+        "FreeRTOS",
+        "Solar Power"
+      ],
+      "link": "https://github.com/saleemshahzad",
+      "sortOrder": 2,
+      "createdAt": "2026-04-25T11:43:36.730Z",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "id": 3,
+      "title": "Smart Home Automation Hub",
+      "description": "Arduino Mega based centralized home automation controller with custom relay shield, supporting MQTT and physical fallback switches.",
+      "details": "### Control Approach\n\nThe hub keeps automations practical even when the network is unreliable.\n\n- Hardware relay control\n- MQTT integration\n- Manual fallback switching\n- Modular expansion approach for new zones\n\nThe design goal was a system that still felt dependable for daily use.",
+      "image": "/images/project-3.png",
+      "tags": [
+        "Arduino C++",
+        "MQTT",
+        "Relay Control",
+        "Home Assistant"
+      ],
+      "link": "https://github.com/saleemshahzad",
+      "sortOrder": 3,
+      "createdAt": "2026-04-25T11:43:36.730Z",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    }
+  ],
+  "sections": [
+    {
+      "key": "home_name",
+      "value": "Saleem Shahzad",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "key": "home_role",
+      "value": "Electrical Engineer - Embedded Systems",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "key": "home_tagline",
+      "value": "I design circuits, lay out PCBs, and write firmware that brings hardware to life. Specializing in Arduino, ESP32, and production-ready embedded systems.",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "key": "home_hero_image",
+      "value": "/images/headshot.png",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "key": "home_ticker",
+      "value": "[\n  \"Altium Designer\",\n  \"KiCad\",\n  \"STM32\",\n  \"ESP32\",\n  \"FreeRTOS\",\n  \"C/C++\",\n  \"Zephyr\",\n  \"LoRaWAN\",\n  \"BLE\",\n  \"I2C/SPI\"\n]",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "key": "about_intro",
+      "value": "I am an electrical engineer focused on the place where hardware and software meet. I enjoy building systems that behave well in the real world, not just on paper.",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "key": "about_philosophy",
+      "value": "Embedded systems engineering is about constraints: power, timing, memory, and reliability. I approach every project with a system-level mindset so the board layout, firmware behavior, and product goals all support each other.",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "key": "about_timeline",
+      "value": "[\n  {\n    \"role\": \"Senior Embedded Engineer\",\n    \"period\": \"2022 - Present\",\n    \"desc\": \"Leading firmware development and hardware design for next-generation industrial IoT devices. Architected scalable ESP32-based sensor networks.\",\n    \"active\": true\n  },\n  {\n    \"role\": \"Hardware Design Engineer\",\n    \"period\": \"2019 - 2022\",\n    \"desc\": \"Designed complex multi-layer PCBs for consumer electronics. Extensive use of Altium Designer and rigorous EMI/EMC compliance testing.\",\n    \"active\": false\n  },\n  {\n    \"role\": \"B.S. Electrical Engineering\",\n    \"period\": \"2015 - 2019\",\n    \"desc\": \"Specialized in control systems and microelectronics. Graduated with Honors. Capstone project: Autonomous Hexapod Robot.\",\n    \"active\": false\n  }\n]",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "key": "contact_email",
+      "value": "saleem.shahzad@example.com",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "key": "contact_location",
+      "value": "Pakistan",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "key": "contact_github",
+      "value": "https://github.com/saleemshahzad",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "key": "contact_linkedin",
+      "value": "https://linkedin.com/in/saleemshahzad",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    },
+    {
+      "key": "connect_accounts",
+      "value": "[\n  {\n    \"name\": \"GitHub\",\n    \"url\": \"https://github.com/saleemshahzad\"\n  },\n  {\n    \"name\": \"LinkedIn\",\n    \"url\": \"https://linkedin.com/in/saleemshahzad\"\n  },\n  {\n    \"name\": \"Email\",\n    \"url\": \"mailto:saleem.shahzad@example.com\"\n  }\n]",
+      "updatedAt": "2026-04-25T11:43:36.730Z"
+    }
+  ],
+  "sessions": [
+    {
+      "sid": "46b78eb137014e514106a739993869d5d1b0caeda212184daa5edfa80351dadb",
+      "user": {
+        "id": "local-admin",
+        "email": "saleem2003",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T11:44:32.373Z"
+    },
+    {
+      "sid": "4ee835db2873b6dd403fcf29afb04655fc95ce9723272a1b53812d581dc7afb0",
+      "user": {
+        "id": "local-admin",
+        "email": "saleem2003",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T11:44:35.741Z"
+    },
+    {
+      "sid": "a3609ea40d18a78fccb848dfd91b1fd269706bd0cba3b7e2046269161fca43e1",
+      "user": {
+        "id": "local-admin",
+        "email": "saleem2003",
+        "firstName": "Local",
+        "lastName": "Admin",
+        "profileImageUrl": null
+      },
+      "expiresAt": "2026-05-02T11:44:49.857Z"
+    }
+  ]
+}

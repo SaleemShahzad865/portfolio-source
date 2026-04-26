@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: portfolio
+    runtime: node
+    plan: free
+    autoDeploy: true
+    buildCommand: >
+      corepack enable &&
+      pnpm install --frozen-lockfile &&
+      PORT=5173 BASE_PATH=/ pnpm -C artifacts/portfolio run build &&
+      pnpm -C artifacts/api-server run build
+    startCommand: node artifacts/api-server/dist/index.mjs
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # You can also set these in the Render dashboard (recommended) even though the app has defaults.
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      # REQUIRED for Postgres persistence (recommended for production).
+      # Point this to Supabase/Neon/etc. (e.g. postgres://...).
+      - key: DATABASE_URL
+        sync: false
