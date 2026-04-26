@@ -4,6 +4,7 @@
   "buildCommand": "corepack enable && pnpm install --frozen-lockfile && BASE_PATH=/ pnpm -C artifacts/portfolio run build && pnpm -C artifacts/api-server run build",
   "outputDirectory": "artifacts/portfolio/dist/public",
   "rewrites": [
+    { "source": "/api/:path*", "destination": "/api?path=:path*" },
     { "source": "/uploads/:path*", "destination": "/api/uploads-static/:path*" },
     { "source": "/:path((?!api(?:/|$)).*)", "destination": "/index.html" }
   ]
